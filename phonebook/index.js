@@ -1,6 +1,11 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
+
 const app = express()
+
+app.use(cors())
+app.use(express.static('build'))
 app.use(express.json())
 morgan.token('post-body', request => { return JSON.stringify(request.body)})
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-body'))
@@ -54,6 +59,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
   response.status(204).end()
 })
+
 const generateId = () => {
   const newId = Math.floor(Math.random() * persons.length * 100)
   return newId
