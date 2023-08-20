@@ -6,35 +6,55 @@ const cors = require('cors')
 const app = express()
 const Person = require('./models/person')
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).json({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
 app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
 morgan.token('post-body', request => { return JSON.stringify(request.body)})
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-body'))
 
-app.get('/info', (request, response) => {
-  Person.find({}).then(result => {
+app.get('/info', (request, response, next) => {
+  Person.find({})
+  .then(result => {
     response.send(`<p>Phonebook contains info for ${result.length} people</p>
                     <p>${new Date()}</p>`)
   })
+  .catch(error => next(error))
 })
 
-app.get('/api/persons', (request, response) => {
-  Person.find({}).then(result => {
+app.get('/api/persons', (request, response, next) => {
+  Person
+  .find({}).then(result => {
     response.json(result)
   })
+  .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id).then(person => {
-    response.json(person)
-  })
+    if (person) {
+      response.json(person)
+    } else {
+      response.status(404).end()
+    }
+  }).catch((error) => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-  Person.findByIdAndRemove(request.params.id).then(
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+  .then(() => {
     response.status(204).end()
-  )
+  })
+  .catch((error) => next(error))
 })
 
 app.post('/api/persons', (request, response) => {
@@ -62,6 +82,8 @@ app.post('/api/persons', (request, response) => {
     response.json(result)
   })
 })
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
