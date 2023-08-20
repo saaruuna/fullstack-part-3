@@ -25,7 +25,7 @@ const NewContactForm = ({persons, setPersons, setSuccessMessage, setErrorMessage
               setTimeout(() => {setSuccessMessage(null)}, 5000)
             })
             .catch(error => {
-              setErrorMessage(`Information of ${nameObject.name} not found on server`)        
+              setErrorMessage(error.response.data.error)        
               setTimeout(() => {setErrorMessage(null)}, 5000)
             })
           }
@@ -38,7 +38,7 @@ const NewContactForm = ({persons, setPersons, setSuccessMessage, setErrorMessage
             setTimeout(() => {setSuccessMessage(null)}, 5000)
           })
           .catch(error => {
-            setErrorMessage(`Could not add ${nameObject.name}`)        
+            setErrorMessage(error.response.data.error)        
             setTimeout(() => {setErrorMessage(null)}, 5000)
           })
         }

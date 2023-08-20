@@ -8,6 +8,5 @@ PUT http://localhost:3001/api/persons/64e1e0fbc9bc699db8200f94
 content-type: application/json
 
 {
-    "name": "full_odin", 
-    "number": "668"
+    "name": "b"
 }
