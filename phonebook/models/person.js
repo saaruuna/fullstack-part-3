@@ -22,6 +22,13 @@ const personSchema = new mongoose.Schema({
   },
   number: {
     type: String,
+    validate: {
+      validator: v => {
+        return /\d{2,3}-\d{4,}$/.test(v)
+      },
+      message: props => `invalid phone number ${props.value}`
+    },
+    minLength: 8,
     required:true
   },
 })
