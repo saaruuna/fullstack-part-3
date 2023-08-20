@@ -57,6 +57,33 @@ app.delete('/api/persons/:id', (request, response, next) => {
   .catch((error) => next(error))
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  if (!body.name) {
+    return response.status(400).json({ 
+      error: 'name missing' 
+    })
+  }
+
+  if (!body.number) {
+    return response.status(400).json({ 
+      error: 'number missing' 
+    })
+  }
+
+  const personUpdate = {
+    name: body.name,
+    number: body.number,
+  }
+
+  Person.findByIdAndUpdate(request.params.id, personUpdate, {new: true})
+  .then((result) => {
+    response.json(result)
+  })
+  .catch(error => next(error))
+})
+
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
